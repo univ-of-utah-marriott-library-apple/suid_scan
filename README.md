@@ -1,11 +1,11 @@
-EBCheck
-=======
+SUID Scan
+=========
 
-EBCheck is a simple script to help you check for files with execute-as bits set (i.e. the SUID and SGID bits). In general it is intended for use in distributed environments where you may not be able to upgrade your computers to the most recent version of OS X immediately.
+SUID Scan is a simple script to help you check for files with execute-as bits set (i.e. the SUID and SGID bits). In general it is intended for use in distributed environments where you may not be able to upgrade your computers to the most recent version of OS X immediately.
 
 ## Origins
 
-EBCheck came around when our group heard about the [rootpipe security vulnerability](https://truesecdev.wordpress.com/2015/04/09/hidden-backdoor-api-to-root-privileges-in-apple-os-x/). In our environment, upgrading immediately to Yosemite (10.10.3) is not feasible, so we needed a way to at least detect whether somebody had modified our systems.
+SUID Scan came around when our group heard about the [rootpipe security vulnerability](https://truesecdev.wordpress.com/2015/04/09/hidden-backdoor-api-to-root-privileges-in-apple-os-x/). In our environment, upgrading immediately to Yosemite (10.10.3) is not feasible, so we needed a way to at least detect whether somebody had modified our systems.
 
 We acknowledge up front that the method detailed within is not 100% secure. There are plenty of holes available to somebody with enough know-how to really abuse the rootpipe exploit. However, we hope that this at least offers some sort of mediocre detection system.
 
