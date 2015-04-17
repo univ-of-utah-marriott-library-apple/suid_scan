@@ -9,7 +9,7 @@ We developed SUID Scan as a frontline, lightweight defense mechanism against the
 
 ### What Is Rootpipe?
 
-[CVE-2015-1130](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1130), or "rootpipe" as it is commonly called, is a weakness in the private Admin Framework of Mac OS X versions 10.7 through 10.10.2. Specifically, a specific unsecured XPC service allows the unauthorized creation of files owned by root with the setuid (SUID) bit set<sup>[[1]](#1)</sup>. Binaries with the setuid bit set behave as if the owner of the file has launched them, regardless of who the actual launching user is. Normally the SUID bit is used when a process must be run as a specific user, and sometimes that user is root. Rootpipe can easily be used for malicious purposes, to create binaries with root-level (complete access) privileges.
+[CVE-2015-1130](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1130), or "rootpipe" as it is commonly called, is a weakness in the private Admin Framework of Mac OS X ***versions 10.7.0 through 10.10.2***. In particular, a specific unsecured XPC service allows the unauthorized creation of files owned by root with the setuid (SUID) bit set<sup>[[1]](#1)</sup>. Binaries with the setuid bit set behave as if the owner of the file has launched them, regardless of who the actual launching user is. Normally the SUID bit is used when a process must be run as a specific user, and sometimes that user is root. Rootpipe can easily be used for malicious purposes, to create binaries with root-level (complete access) privileges.
 
 SUID Scan searches for files with this bit set. It allows administrators to create a list of known SUID applications.
 
