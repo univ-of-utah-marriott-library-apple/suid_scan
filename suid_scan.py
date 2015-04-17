@@ -17,14 +17,15 @@ HASHER = '/usr/bin/openssl sha1'
 MAILTO = ''
 
 
-def main(input=None, output=None):
+def main(in_file=None, output=None):
     # Get the inventory of everything on the filesystem and then sort it
     # alphabetically.
     filesystem_inventory = inventory_filesystem()
     
-    # Cross-reference input with inventory, if applicable.
-    if input:
-        filesystem_inventory = crossref_inventory(input, filesystem_inventory)
+    # Cross-reference in_file with inventory, if applicable.
+    if in_file:
+        print("Cross-referencing found items against {}").format(in_file)
+        filesystem_inventory = crossref_inventory(in_file, filesystem_inventory)
     
     # Sort the list for neatness.
     filesystem_inventory = sorted(filesystem_inventory, key=lambda entry: entry[0].lower())
@@ -36,8 +37,8 @@ def main(input=None, output=None):
     for entry in filesystem_inventory:
         line = "{path}\t{mtime}\t{hash}".format(
             path  = os.path.abspath(entry[0]),
-            mtime = entry[1] if entry[1] else "",
-            hash  = entry[2] if entry[2] else ""
+            mtime = entry[1],
+            hash  = entry[2]
         )
         if output:
             with open(output, "a") as out_file:
@@ -66,16 +67,17 @@ def crossref_inventory(in_file, inventory):
         lines = f.read().splitlines()
     lines = [x for x in lines if x] # remove blanks
     
-    # Iterate over the lines, and match to the items in inventory. If a match is
-    # found, remove it from the inventory. Then return the trimmed-down list of
-    # bad files.
+    # Iterate over the lines, and match to the items in inventory.
+    results = []
     for line in lines:
         path, mtime, hash = line.split('\t')
         tuple = (path, mtime, hash)
-        if tuple in inventory:
-            inventory.remove(tuple)
+        results.append(tuple)
     
-    return inventory
+    # Remove duplicates.
+    results = [x for x in results if all(x[0] == y[0] and x[1] == y[1] and x[2] == y[2] for y in inventory)]
+    
+    return results
 
 
 def inventory_filesystem():
