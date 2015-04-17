@@ -5,17 +5,21 @@ SUID Scan is a lightweight script to help you check for files with execute-as bi
 
 ## What Is It?
 
-We developed SUID scan as a frontline, lightweight defense mechanism against the [rootpipe security vulnerability](https://truesecdev.wordpress.com/2015/04/09/hidden-backdoor-api-to-root-privileges-in-apple-os-x/) published in April, 2015.
+We developed SUID Scan as a frontline, lightweight defense mechanism against the [rootpipe security vulnerability](https://truesecdev.wordpress.com/2015/04/09/hidden-backdoor-api-to-root-privileges-in-apple-os-x/) published in April, 2015.
 
 ### What Is Rootpipe?
 
-[CVE-2015-1130](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1130), or "rootpipe" as it is commonly called, is a weakness in the private Admin Framework. Specifically, a specific unsecured XPC service allows the unauthorized creation of files owned by root with the setuid (SUID) bit set<sup>[[1]](#1)</sup>. Binaries with the setuid bit set behave as if the owner of the file has launched them, regardless of who the actual launching user is. Normally the SUID bit is used when a process must be run as a specific user, and sometimes that user is root. Rootpipe can easily be used for malicious purposes, to create binaries with root-level (complete access) privileges.
+[CVE-2015-1130](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1130), or "rootpipe" as it is commonly called, is a weakness in the private Admin Framework of Mac OS X versions 10.7 through 10.10.2. Specifically, a specific unsecured XPC service allows the unauthorized creation of files owned by root with the setuid (SUID) bit set<sup>[[1]](#1)</sup>. Binaries with the setuid bit set behave as if the owner of the file has launched them, regardless of who the actual launching user is. Normally the SUID bit is used when a process must be run as a specific user, and sometimes that user is root. Rootpipe can easily be used for malicious purposes, to create binaries with root-level (complete access) privileges.
 
 SUID Scan searches for files with this bit set. It allows administrators to create a list of known SUID applications.
 
 ### Disclaimer
 
 We acknowledge up-front that our approach (detailed in this document) is not intended to be a comprehensive solution, and it may not suit the needs of your particular environment. There are plenty of holes available to someone with enough know-how to really abuse the rootpipe exploit. However, we hope that this initial implementation can be used as an early-warning detection system until a more thorough approach is made available.
+
+### Recommendation
+
+Our best recommendation is that you update your computer(s) to OS X 10.10.3, which is not vulnerable to this exploit. However, we are sympathetic to the fact that this may be difficult and so we provide SUID Scan to you.
 
 ## How to use it
 
@@ -73,7 +77,7 @@ What the rootpipe vulnerability does is allow the creation of files owned by roo
 
 A hash is like a digital fingerprint for a file. Hashes are often used by websites that offer downloads so you can tell whether the file has become corrupted during transfer; they post a hash with the file link, and then you can check the hash of the downloaded file to compare. Hash functions that generate hashes are designed to reduce the likelihood of hash collision (i.e. when two different files have the same hash), but this cannot be guaranteed and is a risk.
 
-The default hash function used by SUID scan is the SHA1 hash provided by `/usr/bin/openssl sha1`. You may provide your own hash-generating command as an argument on the command line at invocation of the `suid_scan.py` script. Any argument are concatenated into one command for a hash-generator, which must take a file path as its final argument.
+The default hash function used by SUID Scan is the SHA1 hash provided by `/usr/bin/openssl sha1`. You may provide your own hash-generating command as an argument on the command line at invocation of the `suid_scan.py` script. Any argument are concatenated into one command for a hash-generator, which must take a file path as its final argument.
 
 For example, we use the hash provided by Radmind's fsdiff tool. For our invocation, we would do:
 
