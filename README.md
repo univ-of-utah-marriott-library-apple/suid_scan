@@ -21,11 +21,24 @@ We acknowledge up-front that our approach (detailed in this document) is not int
 
 Our best recommendation is that you update your computer(s) to OS X 10.10.3, which is not vulnerable to this exploit. However, we are sympathetic to the fact that this may be difficult and so we provide SUID Scan to you.
 
-## How to use it
+## How To Use It
 
-1. Start with a machine in a known state. This may mean starting with a just-imaged machine. In our case, it's a machine that has just finished its Radmind post-maintenance cycle.
-2. Run the script, and redirect the output to a file. The script generates a tab-separated list of absolute file paths, modification times, and hashes<sup>[[2]](#2)</sup> for those files which have either the SUID or SGID bit set (or both). (Items that are not files, such as directories, will simply have blank modification times/hashes set.)
-3. Periodically during regular use of the computer, run the script again and compare the results (e.g. with `diff`) to find differences between the known-good SUID applications and new additions. We have not arrived at a definitive number for how often this should be done. You may want to run frequently during use (e.g. every 5 minutes), or maybe only when users logout. We're leaning towards the latter because we don't want the `find` process to negatively impact our users' experience.
+1. Start with a machine in a known state. In many cases this means starting with a machine that has just been imaged. For us, it means using a machine that has just completed its Radmind post-maintenance cycle.
+2. `suid_scan.py --output /secure/path/to/a/file` will produce a file with a list of all files owned by root and that have the SUID or SGID bit set.
+3. Periodically run the scan again, and compare against the previously-created file: `suid_scan.py --input /secure/path/to/a/file`
+
+We recommend setting up (3) to occur periodically via LaunchDaemon, and to set it to automatically email the result.
+
+### Usage Options
+
+| Option              | Purpose                                                                                                 |
+|---------------------|---------------------------------------------------------------------------------------------------------|
+| `--help`            | Prints help information and quits.                                                                      |
+| `--version`         | Prints program version information and quits.                                                           |
+| `--output out_file` | Specifies the destination for a list of found bad files with their hashes and modification timestamps.  |
+| `--input in_file`   | Where to read in a list to compare against the current scan.                                            |
+| `--mailto address`  | Send information to 'address' via email. 'address' can be given as a comma-separated list of addresses. |
+| `--hash function`   | Override the default hashing function. Give 'function' as '/path/to/function with parameters'.          |
 
 ## How it works
 
