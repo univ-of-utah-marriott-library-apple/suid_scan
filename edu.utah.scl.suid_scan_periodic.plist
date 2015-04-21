@@ -8,7 +8,7 @@
 	<string>Background</string>
 	<key>ProgramArguments</key>
 	<array>
-		<!-- Configure these settings according to the built-in documentaiton. -->
+		<!-- Configure these settings according to the built-in documentation. -->
 		<string>/usr/bin/python</string>
 		<string>/usr/local/sbin/suid_scan.py</string>
 		<!-- <string>--input</string><string>/path/to/input/file</string> -->
