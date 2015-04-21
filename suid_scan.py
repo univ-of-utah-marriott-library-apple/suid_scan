@@ -14,10 +14,9 @@ if os.geteuid() != 0:
 
 # Sets the default hash function.
 HASHER = '/usr/bin/openssl sha1'
-MAILTO = ''
 
 
-def main(in_file=None, output=None):
+def main(in_file=None, out_file=None, mail_to=None):
     # Get the inventory of everything on the filesystem and then sort it
     # alphabetically.
     filesystem_inventory = inventory_filesystem()
@@ -32,19 +31,46 @@ def main(in_file=None, output=None):
     
     # Print the findings. Tabs are used for separation because they're parsable.
     print("Total dangerous items found: {}").format(len(filesystem_inventory))
-    with open(output, "w"):
-        pass
+    if out_file:
+        with open(out_file, "w"):
+            pass
     for entry in filesystem_inventory:
-        line = "{path}\t{mtime}\t{hash}".format(
-            path  = os.path.abspath(entry[0]),
-            mtime = entry[1],
-            hash  = entry[2]
-        )
-        if output:
-            with open(output, "a") as out_file:
-                out_file.write(line + "\n")
+        line = '\t'.join(reversed(entry))
+        if out_file:
+            with open(out_file, "a") as f:
+                f.write(line + "\n")
         else:
             print(line)
+    if mail_to:
+        send_mail(filesystem_inventory, mail_to)
+
+
+def send_mail(inventory, mail_to):
+    """
+    Sends an email to the specified recipient containing the list of discovered
+    items.
+    
+    :param inventory: a list of tuples of information
+    :param mail_to: the address of the recipient
+    """
+    # First prep the information.
+    body = "Total dangerous items found: {}\n\n".format(len(inventory))
+    for entry in inventory:
+        body += '\t'.join(reversed(entry))
+        body += '\n'
+    
+    mail_command = [
+        '/usr/bin/mail',
+        '-s', 'SUID Scan Results',
+        mail_to
+    ]
+    try:
+        # Attempt to send the message.
+        process = subprocess.Popen(mail_command, stdin=subprocess.PIPE)
+        process.communicate(body)
+    except Exception as e:
+        print(e)
+        print("Unable to send mail.")
 
 
 def crossref_inventory(in_file, inventory):
@@ -66,16 +92,33 @@ def crossref_inventory(in_file, inventory):
     with open(in_file) as f:
         lines = f.read().splitlines()
     lines = [x for x in lines if x] # remove blanks
-    
-    # Iterate over the lines, and match to the items in inventory.
-    results = []
+    file_inventory = []
     for line in lines:
-        path, mtime, hash = line.split('\t')
-        tuple = (path, mtime, hash)
-        results.append(tuple)
+        hash, mtime, path = line.split('\t')
+        file_inventory.append((path, mtime, hash))
     
-    # Remove duplicates.
-    results = [x for x in results if all(x[0] == y[0] and x[1] == y[1] and x[2] == y[2] for y in inventory)]
+    ####
+    # Iterate over the lines, and match to the items in inventory. Only those
+    # items which don't match up will be added to the returned results.
+    results = []
+    # Find 'file_inventory' - 'inventory'
+    for entry in file_inventory:
+        should_add = True
+        for match in inventory:
+            if all(entry[x] == match[x] for x in xrange(3)):
+                should_add = False
+                break
+        if should_add:
+            results.append(entry)
+    # Find 'inventory' - 'file_inventory'
+    for entry in inventory:
+        should_add = True
+        for match in file_inventory:
+            if all(entry[x] == match[x] for x in xrange(3)):
+                should_add = False
+                break
+        if should_add:
+            results.append(entry)
     
     return results
 
@@ -113,7 +156,7 @@ def inventory_filesystem():
             # Check file exists.
             if os.path.isfile(file):
                 try:
-                    mtime = int(os.path.getmtime(file))
+                    mtime = str(int(os.path.getmtime(file)))
                 except:
                     mtime = ""
                 try:
@@ -231,8 +274,6 @@ if __name__ == '__main__':
     
     if args.hash:
         HASHER = args.hash
-    if args.mailto:
-        MAILTO = args.mailto
     
     if not os.path.isfile(shlex.split(HASHER)[0]):
         sys.stderr.write("ERROR: Invalid hash function given: {}\n".format(shlex.split(HASHER)[0]))
@@ -240,4 +281,4 @@ if __name__ == '__main__':
         sys.stderr.flush()
         sys.exit(1)
     
-    main(args.input, args.output)
+    main(args.input, args.output, args.mailto)
