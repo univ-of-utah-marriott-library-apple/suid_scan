@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>edu.utah.scl.suid_scan_periodic</string>
+	<string>edu.utah.scl.suid_scan.periodic</string>
 	<key>ProcessType</key>
 	<string>Background</string>
 	<key>ProgramArguments</key>
@@ -16,10 +16,6 @@
 		<!-- <string>--mailto</string><string>your.address@email.com</string> -->
 		<!-- <string>--hash</string><string>/path/to/hashfunction with parameters</string> -->
 	</array>
-	<key>StandardOutPath</key>
-	<string>/var/log/suid_scan_periodic_results.txt</string>
-	<key>StandardErrorPath</key>
-	<string>/var/log/suid_scan_periodic_errors.txt</string>
 	<key>StartInterval</key>
 	<!-- Change this value according to your preference. -->
 	<!-- The value is number of seconds between executions. -->

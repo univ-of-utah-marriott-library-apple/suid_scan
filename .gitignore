@@ -54,3 +54,6 @@ docs/_build/
 
 # Custom
 parse_transcripts.py
+distribution.xml
+resources
+scripts

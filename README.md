@@ -40,6 +40,24 @@ We recommend setting up (3) to occur periodically via LaunchDaemon, and to set i
 | `--mailto address`  | Send information to 'address' via email. 'address' can be given as a comma-separated list of addresses. |
 | `--hash function`   | Override the default hashing function. Give 'function' as '/path/to/function with parameters'.          |
 
+### Automated (via launchd)
+
+Included in this repository are three plists to be used with `launchd`: one for a recurring, periodic scan of the file system, and two for a per-logout scan.
+
+#### Periodic Scan
+
+The file `edu.utah.scl.suid_scan.periodic.plist` should be moved into `/Library/LaunchDaemons/` and configured appropriately for your desired settings. This will cause SUID Scan to run on an interval (by default, every 30 minutes).
+
+#### Logout Scan
+
+To run a script on logout, move `edu.utah.scl.suid_scan.login.plist` and `edu.utah.scl.suid_scan.logout.plist` to `/Library/LaunchAgents/`, and the simple shell script `suid_scan.logout_wrapper.sh` to `/usr/local/bin/`.
+
+The way this system works is when a user logs in, the `.login` plist checks for the existence of a trigger file (by default it's `/private/tmp/edu.utah.scl.suid_scan.runatlogout`). If the file does not exist, it is created.
+
+When a user logs out, the `.logout` plist is executed. It checks for the trigger file, removes it, and then runs a scan.
+
+All SUID scan settings for this automated process should be configured in the `suid_scan.logout_wrapper.sh` script. By default it will produce a base scan, and then comparison scans after that.
+
 ## How it works
 
 When you run `suid_scan.py`, it starts by generating a list of all currently-mounted volumes. Then it executes a `find` process on each of these volumes to search for files that:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 import argparse
 import os
@@ -8,11 +8,6 @@ import shlex
 import stat
 import subprocess
 import sys
-
-# Gotta have access to the special places.
-if os.geteuid() != 0:
-    print("Must be root to run this script!")
-    sys.exit(1)
 
 # Sets the default hash function.
 HASHER = '/usr/bin/openssl sha1'
@@ -310,6 +305,12 @@ Track down any files on the system with the SUID or SGID bits set.
 
 
 if __name__ == '__main__':
+    # Gotta have access to the special places.
+    if os.geteuid() != 0:
+        print("Must be root to run this script!")
+        sys.exit(1)
+    
+    # Parse for command line arguments.
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('--help', action='store_true')
     parser.add_argument('--version', action='store_true')
