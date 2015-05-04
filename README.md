@@ -3,6 +3,45 @@ SUID Scan
 
 SUID Scan is a lightweight script to help you check for files with execute-as bits set (i.e. the SUID and SGID bits). In general, it is intended for use in distributed environments as a supplement to your routine OS X systems' maintenance cycle.
 
+## Contents
+
+* [Download](#download) - get the .dmg
+* [System Requirements](#system-requirements) - what you need
+* [Contact](#contact) - how to reach us
+* [Uninstall](#uninstall) - how to remove SUID Scan
+* [What Is It](#what-is-it)
+  * [What Is Rootpipe](#what-is-rootpipe) - the vulnerability we're attempting to address
+  * [Disclaimer](#disclaimer) - we make no guarantees
+  * [Recommendation](#recommendation) - how we advise you use this
+* [How To Use It](#how-to-use-it)
+  * [Usage Options](#usage-options) - command-line options
+  * [Automated (via launchd)](#automated-via-launchd) - automagic
+    * [Periodic Scan](#periodic-scan)
+    * [Logout Scan](#logout-scan)
+* [How It Works](#how-it-works) - behind-the-scenes
+  * [Installation](#installation) - details on the installation procedure
+    * [Periodic Scan](#periodic-scan)
+    * [Logout Scan](#logout-scan)
+* [Footnotes](#footnotes) - miscellaneous odds and ends
+  * [SUID/SGID Permissions](#1)
+  * [Hash Function](#2)
+
+## Download
+
+[Download the latest installer here!](../../releases/)
+
+## System Requirements
+
+The SUID Scan script has been tested to work on Mac OS X 10.9 and 10.10, and uses Python version 2.7.
+
+## Contact
+
+If you have any comments, questions, or other input, either [file an issue](../../issues) or [send an email to us](mailto:mlib-its-mac-github@lists.utah.edu). Thanks!
+
+## Uninstall
+
+To remove SUID Scan from your system, download the .dmg and run the "Uninstall SUID Scan" package to uninstall it. (Note that it will say "Installation Successful" but don't bleive it - it will only remove files.)
+
 ## What Is It?
 
 We developed SUID Scan as a frontline, lightweight defense mechanism against the [rootpipe security vulnerability](https://truesecdev.wordpress.com/2015/04/09/hidden-backdoor-api-to-root-privileges-in-apple-os-x/) published in April, 2015.
@@ -42,7 +81,7 @@ We recommend setting up (3) to occur periodically via LaunchDaemon, and to set i
 
 ### Automated (via launchd)
 
-Included in this repository are three plists to be used with `launchd`: one for a recurring, periodic scan of the file system, and two for a per-logout scan.
+Included in this repository are three plists to be used with `launchd`: one for a recurring, periodic scan of the file system, and two for a per-logout scan. These `launchd` items are included in the installer. See [Installation](#installation) for more specific information.
 
 #### Periodic Scan
 
@@ -58,7 +97,7 @@ When a user logs out, the `.logout` plist is executed. It checks for the trigger
 
 All SUID scan settings for this automated process should be configured in the `suid_scan.logout_wrapper.sh` script. By default it will produce a base scan, and then comparison scans after that.
 
-## How it works
+## How It Works
 
 When you run `suid_scan.py`, it starts by generating a list of all currently-mounted volumes. Then it executes a `find` process on each of these volumes to search for files that:
 
@@ -67,6 +106,28 @@ When you run `suid_scan.py`, it starts by generating a list of all currently-mou
  * have 2000 (SGID) or 4000 (SUID) permissions set
 
 This list is then sorted (for easier `diff`ing), and each file is checked for a modification timestamp and a hash. These three items (path, modification time, hash) are outputted in one line separated by tabs, with one line for each file found.
+
+## Installation
+
+To install SUID Scan, grab the latest `.dmg` from [the releases page](../../releases/). Open it up, and inside you will find a package to perform installation.
+
+When installing the script, you will be given the option of also installing some `launchd` items. These are provided to help you run SUID Scan on an automated schedule, and they are given in two forms: periodic and logout.
+
+Note that any time you modify a LaunchDaemon or LaunchAgent, you must first unload it with `sudo launchctl unload {path to plist}`, then do your modifications, and then load it back with `sudo launchctl load {path to plist}`. For some of these you may get a warning that the daemon/agent "cannot be loaded in this session", but that's okay.
+
+### Periodic Scan
+
+The periodic scan occurs on a given time interval. It is controlled by a property list file installed to `/Library/LaunchDaemons/edu.utah.scl.suid_scan.periodic.plist`. If you modify this plist, you can change the configuration options for how the SUID Scan is run (input comparison file, output file location, etc.) as well as how often the scan runs. The default is to run every 1800 seconds (30 minutes).
+
+### Logout Scan
+
+If you want to scan after users logout, use the Logout LaunchAgent. It installs a few files to be able to manage the automated logout procedure:
+
+1. `/Library/LaunchAgents/edu.utah.scl.suid_scan.logout.plist`
+2. `/Library/LaunchAgents/edu.utah.scl.suid_scan.login.plist`
+3. `/usr/local/bin/suid_scan.logout_wrapper.sh`
+
+If you want to configure how the scan is run, you can set all of the execution options in the `/usr/local/bin/suid_scan.logout_wrapper.sh` script. Some options are preconfigured so that the first time the script runs, it will produce a base scan, and every scan after that compares its results to that base scan. This comparison is what will be outputted.
 
 ## Footnotes
 
