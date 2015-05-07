@@ -178,3 +178,16 @@ $ suid_scan.py /usr/local/bin/fsdiff -1c sha1
 ```
 
 The script will take this input and use it in a Python subprocess call as `/usr/local/bin/fsdiff -1c sha1 /path/to/file`. The first part of the argument you give must be a full path to a command that will be executed to generate a hash.
+
+## Update History
+
+This is a short summary of the project's history.
+
+| Date       | Version | Update Description                                                                                 |
+|------------|:-------:|----------------------------------------------------------------------------------------------------|
+| 2015-04-30 | 1.2     | Updated Periodic LaunchDaemon and added Logout LaunchAgents to help with automation.               |
+| 2015-04-21 | 1.2     | Updated documentation and added a Periodic LaunchDaemon for automatation.                          |
+| 2015-04-21 | 1.2     | Fixed an issue where cross-checking files didn't actually work.                                    |
+| 2015-04-17 | 1.1     | Updated to disregard Time Machine volumes and allowed crossreferencing against pre-existing scans. |
+| 2015-04-16 | 1.0     | First commit contained a somewhat usable script to search the file system.                         |
+| 2015-04-09 | -       | Emil Kvarnhammar published [Hidden backdoor API to root privileges in Apple OS X](https://truesecdev.wordpress.com/2015/04/09/hidden-backdoor-api-to-root-privileges-in-apple-os-x/), prompting us to develop a method of monitoring file permissions. |
