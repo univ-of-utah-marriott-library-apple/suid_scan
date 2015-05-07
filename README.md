@@ -25,6 +25,7 @@ SUID Scan is a lightweight script to help you check for files with execute-as bi
 * [Footnotes](#footnotes) - miscellaneous odds and ends
   * [SUID/SGID Permissions](#1)
   * [Hash Function](#2)
+* [Update History](#update-history) - list of changes over the project's history
 
 ## Download
 
