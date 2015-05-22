@@ -10,7 +10,7 @@
 	<array>
 		<!-- Configure these settings according to the built-in documentaiton. -->
 		<string>/usr/bin/python</string>
-		<string>/usr/local/sbin/suid_scan.py</string>
+		<string>/usr/local/bin/suid_scan.py</string>
 		<!-- <string>--input</string><string>/path/to/input/file</string> -->
 		<!-- <string>--output</string><string>/path/to/output/file</string> -->
 		<!-- <string>--mailto</string><string>your.address@email.com</string> -->
